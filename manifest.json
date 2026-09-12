@@ -1,0 +1,16 @@
+{
+  "name": "الانتشار الواسع | Albarakat Sweet",
+  "short_name": "الانتشار الواسع",
+  "description": "متجر شركة الانتشار الواسع للخدمات والاستثمار",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a7a3a",
+  "theme_color": "#1a7a3a",
+  "orientation": "any",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
