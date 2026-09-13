@@ -39,10 +39,11 @@ header{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;padding:
 .cat{flex-shrink:0;padding:7px 14px;border-radius:999px;border:2px solid var(--b);background:#fff;font-weight:600;cursor:pointer;font-size:.85rem}
 .cat.on{background:var(--p);color:#fff;border-color:var(--p)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:6px 0 30px}
-.card{background:var(--c);border-radius:var(--r);overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.07);display:flex;flex-direction:column}
-.pic{height:170px;background:#eef5ee;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.pic img{width:100%;height:100%;object-fit:contain}
-.pic .fb{font-size:2.4rem}
+.card{background:var(--c);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
+.pic{height:180px;background:linear-gradient(145deg,#f8fbf8,#eef5ee);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;border-bottom:1px solid #e5efe5}
+.pic img{width:100%;height:100%;object-fit:contain;padding:10px;transition:transform .25s ease}
+.card:hover .pic img{transform:scale(1.05)}
+.pic .fb{font-size:2.6rem;opacity:.85}
 .body{padding:11px 12px;flex:1;display:flex;flex-direction:column}
 .name{font-weight:700;font-size:.95rem;margin-bottom:2px}
 .sub{font-size:.76rem;color:var(--m);margin-bottom:4px}
@@ -79,7 +80,7 @@ footer{background:var(--pd);color:#fff;padding:22px 0 12px;margin-top:10px}
 .copy{text-align:center;font-size:.75rem;opacity:.75;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--pd);color:#fff;padding:9px 18px;border-radius:999px;font-weight:600;z-index:200;opacity:0;transition:.2s}
 .toast.on{transform:translateX(-50%) translateY(0);opacity:1}
-@media(max-width:520px){.grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}.pic{height:140px}.hero h2{font-size:1.2rem}}
+@media(max-width:520px){.grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}.pic{height:150px}.hero h2{font-size:1.2rem}}
 </style>
 </head>
 <body>
@@ -192,23 +193,9 @@ const IMGS = {
 };
 
 const P = [
-{id:1,c:'sweets',ar:'حلوى السمسم بالفول البري',en:'Peanut Sesame & Cranberry',pr:0.850,ct:'CTN=20 BOX',ic:'🥜'},
-{id:2,c:'sweets',ar:'مكس تنس عروض',en:'Mix Nuts Offer',pr:0.850,ct:'CTN=20 BOX',ic:'🌰'},
-{id:3,c:'sweets',ar:'اكسترا عروض',en:'Extra OFFER',pr:0.850,ct:'CTN=20 BOX',ic:'🎁'},
-{id:4,c:'sweets',ar:'الأفضل',en:'The Best Sweet',pr:1.300,ct:'CTN=20 BOX',ic:'⭐'},
-{id:5,c:'sweets',ar:'اكسترا ثلاث طبقات',en:'Extra 3D Large',pr:3.000,ct:'CTN=18 BOX',ic:'📦'},
-{id:6,c:'sweets',ar:'حلاوة طحينية رهف',en:'Rahash (Halva)',pr:1.800,ct:'CTN=20 BOX',ic:'🍯'},
-{id:7,c:'sweets',ar:'ملبن صغير 27 حبة',en:'Malban 27 PCS',pr:1.300,ct:'CTN=12 BOX',ic:'🍬'},
-{id:8,c:'sweets',ar:'لافندر فول سوداني',en:'Lavender Peanuts',pr:1.800,ct:'CTN=20 BOX',ic:'🥜'},
-{id:9,c:'sweets',ar:'لافندر سمسم',en:'Lavender Sesame',pr:1.800,ct:'CTN=20 BOX',ic:'🌿'},
-{id:10,c:'sweets',ar:'حلقوم صغير 27 حبة',en:'Halgoume 27 PCS',pr:1.300,ct:'CTN=12 BOX',ic:'🍭'},
-{id:11,c:'sweets',ar:'مصاصة شريط',en:'Lollipops Strip',pr:0.450,ct:'CTN=100 PCS',ic:'🍭'},
-{id:12,c:'sweets',ar:'مصاصة متوسطة 50غ',en:'Lollipops Medium 50g',pr:0.400,ct:'CTN=300 PCS',ic:'🍭'},
-{id:13,c:'sweets',ar:'مصاصة صغيرة 35غ',en:'Lollipops Small 35g',pr:0.250,ct:'CTN=600 PCS',ic:'🍭'},
 {id:20,c:'shatleh',ar:'نعنع ناشف 200غ',en:'Dried Mint 200g',pr:1.250,ct:'CTN=12 BOX',ic:'🍃'},
 {id:21,c:'shatleh',ar:'زهورات 80غ',en:'Flowers 80g',pr:1.250,ct:'CTN=12 BOX',ic:'🌸'},
 {id:22,c:'shatleh',ar:'بابونج 80غ',en:'Chamomile 80g',pr:1.250,ct:'CTN=12 BOX',ic:'🌼'},
-{id:23,c:'shatleh',ar:'سماق 500غ',en:'Sumac 500g',pr:1.250,ct:'CTN=12 BOX',ic:'🌶️'},
 {id:24,c:'shatleh',ar:'إكليل الجبل 200غ',en:'Rosemary 200g',pr:1.250,ct:'CTN=12 BOX',ic:'🌿'},
 {id:25,c:'shatleh',ar:'ميرمية 90غ',en:'Sage 90g',pr:1.250,ct:'CTN=12 BOX',ic:'🍃'},
 {id:26,c:'shatleh',ar:'كركديه 150غ',en:'Roselle 150g',pr:0.850,ct:'CTN=12 BOX',ic:'🌺'},
@@ -216,20 +203,6 @@ const P = [
 {id:28,c:'shatleh',ar:'شوفان 500غ',en:'Whole Oats 500g',pr:1.000,ct:'CTN=12 BOX',ic:'🌾'},
 {id:29,c:'shatleh',ar:'ورق زعتر 100غ',en:'Thyme Leaves 100g',pr:1.250,ct:'CTN=12 BOX',ic:'🌿'},
 {id:30,c:'shatleh',ar:'مورينجا ورق 125غ',en:'Moringa Leaves 125g',pr:1.250,ct:'CTN=12 BOX',ic:'🌱'},
-{id:31,c:'shatleh',ar:'مردقوش 120غ',en:'Marjoram 120g',pr:1.250,ct:'CTN=12 BOX',ic:'🌿'},
-{id:32,c:'shatleh',ar:'فريكة خشنة 450غ',en:'Coarse Freekeh 450g',pr:0.875,ct:'CTN=12 BOX',ic:'🌾'},
-{id:33,c:'shatleh',ar:'فريكة ناعمة 450غ',en:'Fine Freekeh 450g',pr:0.875,ct:'CTN=12 BOX',ic:'🌾'},
-{id:34,c:'shatleh',ar:'مفتول 500غ',en:'Maftoul 500g',pr:0.750,ct:'CTN=12 BOX',ic:'🍝'},
-{id:35,c:'shatleh',ar:'جميد 1كغ',en:'Soup Starter 1KG',pr:2.250,ct:'CTN=8 BOX',ic:'🥣'},
-{id:36,c:'shatleh',ar:'خل تفاح 250مل',en:'Apple Vinegar 250ml',pr:1.250,ct:'CTN=12 BOX',ic:'🍎'},
-{id:37,c:'shatleh',ar:'دبس رمان 350غ',en:'Pomegranate Molasses',pr:1.250,ct:'CTN=12 BOX',ic:'🍇'},
-{id:38,c:'shatleh',ar:'بهارات بطاطا 200غ',en:'Potato Spices 200g',pr:0.850,ct:'CTN=12 BOX',ic:'🥔'},
-{id:39,c:'shatleh',ar:'بديل مكعبات دجاج',en:'Chicken Cubes Sub',pr:0.850,ct:'CTN=12 BOX',ic:'🐔'},
-{id:40,c:'shatleh',ar:'مسحوق مورينجا 150غ',en:'Moringa Powder 150g',pr:1.250,ct:'CTN=12 BOX',ic:'🌱'},
-{id:41,c:'shatleh',ar:'مرقة دجاج 480غ',en:'Chicken Stock 480g',pr:0.850,ct:'CTN=24 BOX',ic:'🍲'},
-{id:42,c:'shatleh',ar:'مرقة دجاج المذاق',en:'Chicken Stock AlMathag',pr:0.850,ct:'CTN=12 BOX',ic:'🍲'},
-{id:43,c:'shatleh',ar:'زعتر فلسطيني 500غ',en:'Palestinian Thyme',pr:1.600,ct:'CTN=12 BOX',ic:'🇵🇸'},
-{id:44,c:'shatleh',ar:'عشبة الليمون',en:'Lemon Grass',pr:1.000,ct:'CTN=12 BOX',ic:'🍋'},
 {id:50,c:'tea',ar:'شاي نعنع',en:'Mint Tea',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
 {id:51,c:'tea',ar:'كمون وليمون وزنجبيل',en:'Cumin Lemon Ginger',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
 {id:52,c:'tea',ar:'رمان وتوت',en:'Pomegranate Berries',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
@@ -252,6 +225,34 @@ const P = [
 {id:69,c:'tea',ar:'مورينجا',en:'Moringa Tea',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
 {id:70,c:'tea',ar:'كمون وليمون',en:'Cumin Lemon',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
 {id:71,c:'tea',ar:'زهورات',en:'Flowers Tea',pr:0.800,ct:'CTN=12 BOX 20+5',ic:'🍵'},
+{id:1,c:'sweets',ar:'حلوى السمسم بالفول البري',en:'Peanut Sesame & Cranberry',pr:0.850,ct:'CTN=20 BOX',ic:'🥜'},
+{id:2,c:'sweets',ar:'مكس تنس عروض',en:'Mix Nuts Offer',pr:0.850,ct:'CTN=20 BOX',ic:'🌰'},
+{id:3,c:'sweets',ar:'اكسترا عروض',en:'Extra OFFER',pr:0.850,ct:'CTN=20 BOX',ic:'🎁'},
+{id:4,c:'sweets',ar:'الأفضل',en:'The Best Sweet',pr:1.300,ct:'CTN=20 BOX',ic:'⭐'},
+{id:5,c:'sweets',ar:'اكسترا ثلاث طبقات',en:'Extra 3D Large',pr:3.000,ct:'CTN=18 BOX',ic:'📦'},
+{id:6,c:'sweets',ar:'حلاوة طحينية رهف',en:'Rahash (Halva)',pr:1.800,ct:'CTN=20 BOX',ic:'🍯'},
+{id:7,c:'sweets',ar:'ملبن صغير 27 حبة',en:'Malban 27 PCS',pr:1.300,ct:'CTN=12 BOX',ic:'🍬'},
+{id:8,c:'sweets',ar:'لافندر فول سوداني',en:'Lavender Peanuts',pr:1.800,ct:'CTN=20 BOX',ic:'🥜'},
+{id:9,c:'sweets',ar:'لافندر سمسم',en:'Lavender Sesame',pr:1.800,ct:'CTN=20 BOX',ic:'🌿'},
+{id:10,c:'sweets',ar:'حلقوم صغير 27 حبة',en:'Halgoume 27 PCS',pr:1.300,ct:'CTN=12 BOX',ic:'🍭'},
+{id:11,c:'sweets',ar:'مصاصة شريط',en:'Lollipops Strip',pr:0.450,ct:'CTN=100 PCS',ic:'🍭'},
+{id:12,c:'sweets',ar:'مصاصة متوسطة 50غ',en:'Lollipops Medium 50g',pr:0.400,ct:'CTN=300 PCS',ic:'🍭'},
+{id:13,c:'sweets',ar:'مصاصة صغيرة 35غ',en:'Lollipops Small 35g',pr:0.250,ct:'CTN=600 PCS',ic:'🍭'},
+{id:23,c:'shatleh',ar:'سماق 500غ',en:'Sumac 500g',pr:1.250,ct:'CTN=12 BOX',ic:'🌶️'},
+{id:31,c:'shatleh',ar:'مردقوش 120غ',en:'Marjoram 120g',pr:1.250,ct:'CTN=12 BOX',ic:'🌿'},
+{id:32,c:'shatleh',ar:'فريكة خشنة 450غ',en:'Coarse Freekeh 450g',pr:0.875,ct:'CTN=12 BOX',ic:'🌾'},
+{id:33,c:'shatleh',ar:'فريكة ناعمة 450غ',en:'Fine Freekeh 450g',pr:0.875,ct:'CTN=12 BOX',ic:'🌾'},
+{id:34,c:'shatleh',ar:'مفتول 500غ',en:'Maftoul 500g',pr:0.750,ct:'CTN=12 BOX',ic:'🍝'},
+{id:35,c:'shatleh',ar:'جميد 1كغ',en:'Soup Starter 1KG',pr:2.250,ct:'CTN=8 BOX',ic:'🥣'},
+{id:36,c:'shatleh',ar:'خل تفاح 250مل',en:'Apple Vinegar 250ml',pr:1.250,ct:'CTN=12 BOX',ic:'🍎'},
+{id:37,c:'shatleh',ar:'دبس رمان 350غ',en:'Pomegranate Molasses',pr:1.250,ct:'CTN=12 BOX',ic:'🍇'},
+{id:38,c:'shatleh',ar:'بهارات بطاطا 200غ',en:'Potato Spices 200g',pr:0.850,ct:'CTN=12 BOX',ic:'🥔'},
+{id:39,c:'shatleh',ar:'بديل مكعبات دجاج',en:'Chicken Cubes Sub',pr:0.850,ct:'CTN=12 BOX',ic:'🐔'},
+{id:40,c:'shatleh',ar:'مسحوق مورينجا 150غ',en:'Moringa Powder 150g',pr:1.250,ct:'CTN=12 BOX',ic:'🌱'},
+{id:41,c:'shatleh',ar:'مرقة دجاج 480غ',en:'Chicken Stock 480g',pr:0.850,ct:'CTN=24 BOX',ic:'🍲'},
+{id:42,c:'shatleh',ar:'مرقة دجاج المذاق',en:'Chicken Stock AlMathag',pr:0.850,ct:'CTN=12 BOX',ic:'🍲'},
+{id:43,c:'shatleh',ar:'زعتر فلسطيني 500غ',en:'Palestinian Thyme',pr:1.600,ct:'CTN=12 BOX',ic:'🇵🇸'},
+{id:44,c:'shatleh',ar:'عشبة الليمون',en:'Lemon Grass',pr:1.000,ct:'CTN=12 BOX',ic:'🍋'},
 {id:80,c:'yasmeen',ar:'معمول بدون سكر 500غ',en:'Mamoul Sugar Free 500g',pr:1.100,ct:'CTN=8 BOX',ic:'🍪'},
 {id:81,c:'yasmeen',ar:'معمول جوز 500غ',en:'Mamoul Walnut 500g',pr:1.100,ct:'CTN=8 BOX',ic:'🍪'},
 {id:82,c:'yasmeen',ar:'معمول زيت زيتون 500غ',en:'Mamoul Olive Oil 500g',pr:1.100,ct:'CTN=8 BOX',ic:'🍪'},
@@ -266,7 +267,7 @@ const P = [
 {id:91,c:'yasmeen',ar:'تمرتي 12 حبة',en:'Tamrati 12pcs',pr:3.000,ct:'CTN=12 BOX',ic:'🍪'},
 {id:92,c:'yasmeen',ar:'كنافة ياسمين',en:'Kunafah Yasmeen',pr:3.000,ct:'CTN=12 BOX',ic:'🍪'},
 {id:93,c:'yasmeen',ar:'برازق ياسمين',en:'Barazek',pr:2.200,ct:'CTN=12 BOX',ic:'🍪'},
-{id:94,c:'yasmeen',ar:'معمول شوكولاته فستق',en:'Chocolate Pistachio',pr:0.850,ct:'CTN=8 BOX',ic:'🍪'},
+{id:94,c:'yasmeen',ar:'معمول شوكولاته فستق',en:'Chocolate Pistachio',pr:0.850,ct:'CTN=8 BOX',ic:'🍪'}
 ];
 
 function t(a,e){return lang==='ar'?a:e}
