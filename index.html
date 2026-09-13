@@ -81,9 +81,30 @@ footer{background:var(--pd);color:#fff;padding:22px 0 12px;margin-top:10px}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--pd);color:#fff;padding:9px 18px;border-radius:999px;font-weight:600;z-index:200;opacity:0;transition:.2s}
 .toast.on{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:520px){.grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}.pic{height:150px}.hero h2{font-size:1.2rem}}
+.splash{position:fixed;inset:0;background:linear-gradient(160deg,#0f5c28 0%,#1a7a3a 40%,#0d4a22 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:#fff;transition:opacity .8s ease,visibility .8s}
+.splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash .logo-big{width:90px;height:90px;background:#fff;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin-bottom:20px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.splash h1{font-size:1.7rem;font-weight:800;margin-bottom:6px;letter-spacing:.5px}
+.splash .sub{font-size:.95rem;opacity:.9;margin-bottom:22px}
+.splash .about{max-width:340px;font-size:.92rem;line-height:1.75;opacity:.95;margin-bottom:28px}
+.splash .ceo{font-size:.88rem;opacity:.85;border-top:1px solid rgba(255,255,255,.25);padding-top:16px;width:100%;max-width:280px}
+.splash .ceo strong{display:block;font-size:1.05rem;margin-top:4px;color:#c9a227}
 </style>
 </head>
 <body>
+<div class="splash" id="splash">
+  <div class="logo-big">🌿</div>
+  <h1>الانتشار الواسع</h1>
+  <div class="sub">للخدمات والاستثمار</div>
+  <div class="about">
+    شركة عُمانية متخصصة في توفير أجود منتجات الحلويات والأعشاب والشاي الطبيعي. نسعى لنشر الجودة والثقة في كل بيت، مع التزامنا بأعلى معايير الخدمة والتوصيل داخل سلطنة عُمان.
+  </div>
+  <div class="ceo">
+    رئيس مجلس الإدارة
+    <strong>عدى الرويسان</strong>
+  </div>
+</div>
+
 <div class="install-bar show" id="installBar">
   <span id="installText">ثبّت التطبيق على جهازك</span>
   <button id="installBtn">تثبيت الآن</button>
@@ -332,6 +353,12 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
 const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 if(isIOS&&!standalone) document.getElementById('iosTip').classList.add('show');
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+
+// Splash screen
+setTimeout(()=>{
+  const s=document.getElementById('splash');
+  if(s){s.classList.add('hide'); setTimeout(()=>s.remove(),900);}
+}, 8500);
 
 document.getElementById('cnt').textContent=cart.reduce((s,i)=>s+i.q,0);
 rend();
