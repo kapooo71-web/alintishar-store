@@ -198,12 +198,13 @@ footer{background:var(--pd);color:#fff;padding:28px 0 16px;margin-top:12px}
     <div class="ci" id="ci"></div>
     <div class="cf">
       <div class="tot"><span id="totLabel">الإجمالي</span><span id="tot">0.000 ر.ع</span></div>
-      <button class="b bw" style="width:100%;padding:13px;font-size:.95rem;border-radius:12px" onclick="checkout()" id="checkoutBtn">إرسال الطلب عبر واتساب</button>
+      <button class="b bw" style="width:100%;padding:13px;font-size:.95rem;border-radius:12px" onclick="checkout()" id="checkoutBtn">تحميل PDF وإرسال عبر واتساب</button>
     </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const WA='96894755722';
 let lang='ar',cart=JSON.parse(localStorage.getItem('ab_cart_v3')||'[]'),cur='all',deferredPrompt=null;
@@ -212,7 +213,7 @@ const P=[{id:20,c:'shatleh',ar:'نعنع ناشف 200غ',en:'Dried Mint 200g',pr
 function t(a,e){return lang==='ar'?a:e}
 function ctnQty(ct){const m=(ct||'').match(/CTN\s*=\s*(\d+)/i);return m?parseInt(m[1],10):12}
 function cartKey(id,type){return id+'_'+(type||'unit')}
-function toggleLang(){lang=lang==='ar'?'en':'ar';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.getElementById('langBtn').textContent=lang==='ar'?'EN':'ع';document.getElementById('brandTitle').textContent=t('الانتشار الواسع','The Wide Spread');document.getElementById('brandSub').textContent=t('للخدمات والاستثمار | Albarakat Sweet','Services & Investment | Albarakat Sweet');document.getElementById('heroTitle').textContent=t('متجر حلويات ومنتجات البركات','Albarakat Sweets & Products');document.getElementById('heroDesc').textContent=t('اطلب مباشرة عبر واتساب. توصيل داخل سلطنة عمان.','Order via WhatsApp. Delivery in Oman.');document.getElementById('cartTitle').textContent=t('سلة الطلبات','Order Cart');document.getElementById('totLabel').textContent=t('الإجمالي','Total');document.getElementById('checkoutBtn').textContent=t('إرسال الطلب عبر واتساب','Send Order via WhatsApp');document.getElementById('installText').textContent=t('ثبّت التطبيق على جهازك','Install the app on your device');document.getElementById('installBtn').textContent=t('تثبيت الآن','Install Now');document.getElementById('floatLbl').textContent=t('إجمالي الطلب','Order Total');document.getElementById('floatBtn').textContent=t('عرض السلة','View Cart');rend();updateFloat();rendCart()}
+function toggleLang(){lang=lang==='ar'?'en':'ar';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.getElementById('langBtn').textContent=lang==='ar'?'EN':'ع';document.getElementById('brandTitle').textContent=t('الانتشار الواسع','The Wide Spread');document.getElementById('brandSub').textContent=t('للخدمات والاستثمار | Albarakat Sweet','Services & Investment | Albarakat Sweet');document.getElementById('heroTitle').textContent=t('متجر حلويات ومنتجات البركات','Albarakat Sweets & Products');document.getElementById('heroDesc').textContent=t('اطلب مباشرة عبر واتساب. توصيل داخل سلطنة عمان.','Order via WhatsApp. Delivery in Oman.');document.getElementById('cartTitle').textContent=t('سلة الطلبات','Order Cart');document.getElementById('totLabel').textContent=t('الإجمالي','Total');document.getElementById('checkoutBtn').textContent=t('تحميل PDF وإرسال عبر واتساب','Download PDF & Send WhatsApp');document.getElementById('installText').textContent=t('ثبّت التطبيق على جهازك','Install the app on your device');document.getElementById('installBtn').textContent=t('تثبيت الآن','Install Now');document.getElementById('floatLbl').textContent=t('إجمالي الطلب','Order Total');document.getElementById('floatBtn').textContent=t('عرض السلة','View Cart');rend();updateFloat();rendCart()}
 function filt(c){cur=c;document.querySelectorAll('.cat').forEach(b=>b.classList.toggle('on',b.dataset.c===c));rend()}
 function rend(){const list=cur==='all'?P:P.filter(p=>p.c===cur);document.getElementById('grid').innerHTML=list.map(p=>{const n=lang==='ar'?p.ar:p.en,s=lang==='ar'?p.en:p.ar;const src=IMGS[p.id];const img=src?`<img src="${src}" alt="${n}" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=fb>${p.ic}</span>'">`:`<span class="fb">${p.ic}</span>`;const cq=ctnQty(p.ct);return `<div class="card"><div class="pic">${img}</div><div class="body"><div class="name">${n}</div><div class="sub">${s}</div><div class="meta">${p.ct}</div><div class="price">${p.pr.toFixed(3)} <small>ر.ع</small></div><div class="acts2"><button class="b bp" onclick="add(${p.id},'unit')">${t('قطعة','Unit')}</button><button class="b bc" onclick="add(${p.id},'carton')">${t('كرتون','Carton')} (${cq})</button><button class="b bw" onclick="now(${p.id})">💬</button></div></div></div>`}).join('')}
 function add(id,type){type=type||'unit';const p=P.find(x=>x.id===id);const cq=ctnQty(p.ct);const qty=type==='carton'?cq:1;const key=cartKey(id,type);const e=cart.find(x=>x.key===key);if(e)e.q+=qty;else cart.push({key,id,q:qty,pr:p.pr,ar:p.ar,en:p.en,type,ct:p.ct});save();toast(type==='carton'?t('تمت إضافة كرتون','Carton added'):t('تمت الإضافة','Added'))}
@@ -225,7 +226,107 @@ function chg(key,d){const i=cart.find(x=>x.key===key);if(!i)return;i.q+=d;if(i.q
 function rm(key){cart=cart.filter(x=>x.key!==key);save()}
 function openCart(){document.getElementById('ov').classList.add('on');rendCart()}
 function closeCart(){document.getElementById('ov').classList.remove('on')}
-function checkout(){if(!cart.length){toast(t('السلة فارغة','Cart empty'));return}let tot=0;const lines=cart.map(i=>{const s=i.pr*i.q;tot+=s;const typ=i.type==='carton'?(lang==='ar'?' [كرتون/جملة]':' [Carton/Wholesale]'):'';return `• ${i.ar} / ${i.en}${typ}\n  ${i.q} × ${i.pr.toFixed(3)} = ${s.toFixed(3)} ر.ع`});const m=encodeURIComponent(lang==='ar'?`مرحباً، أود تأكيد الطلب من متجر الانتشار الواسع:\n\n${lines.join('\n\n')}\n\n────────────\nالإجمالي: ${tot.toFixed(3)} ر.ع\n\nيرجى تأكيد التوفر والتوصيل. شكراً`:`Hello, confirm order from The Wide Spread:\n\n${lines.join('\n\n')}\n\n────────────\nTotal: ${tot.toFixed(3)} OMR\n\nPlease confirm. Thank you`);window.open(`https://wa.me/${WA}?text=${m}`,'_blank')}
+function checkout(){
+  if(!cart.length){toast(t('السلة فارغة','Cart empty'));return}
+  let tot=0;
+  const rows=cart.map(i=>{const s=i.pr*i.q;tot+=s;return{...i,sub:s};});
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    const W=210;
+    doc.setFillColor(15,92,40);
+    doc.rect(0,0,W,32,'F');
+    doc.setFillColor(201,162,39);
+    doc.rect(0,32,W,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.text('Al-Intishar Al-Wase / The Wide Spread',W/2,14,{align:'center'});
+    doc.setFontSize(10);
+    doc.setFont('helvetica','normal');
+    doc.text('Services & Investment  |  CR: 1478928  |  Sultanate of Oman',W/2,22,{align:'center'});
+    doc.text('WhatsApp: +968 9475 5722  |  Tel: +968 9096 9074',W/2,28,{align:'center'});
+    doc.setTextColor(15,92,40);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(14);
+    doc.text('ORDER INVOICE / Order Invoice',W/2,44,{align:'center'});
+    doc.setFontSize(9);
+    doc.setTextColor(80,80,80);
+    doc.setFont('helvetica','normal');
+    const now=new Date();
+    const dateStr=now.toLocaleString(lang==='ar'?'ar-OM':'en-GB');
+    doc.text('Date: '+dateStr,14,52);
+    doc.text('Order #: ABS-'+String(now.getTime()).slice(-8),W-14,52,{align:'right'});
+    let y=60;
+    doc.setFillColor(26,122,58);
+    doc.rect(14,y,W-28,8,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.text('#',16,y+5.5);
+    doc.text('Product',24,y+5.5);
+    doc.text('Type',110,y+5.5);
+    doc.text('Qty',140,y+5.5);
+    doc.text('Price',155,y+5.5);
+    doc.text('Subtotal',178,y+5.5);
+    y+=10;
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(30,30,30);
+    rows.forEach((r,idx)=>{
+      if(y>270){doc.addPage();y=20;}
+      if(idx%2===0){doc.setFillColor(242,248,242);doc.rect(14,y-4,W-28,8,'F');}
+      const name=(r.en||r.ar||'').substring(0,40);
+      const typ=r.type==='carton'?'Carton/Wholesale':'Unit';
+      doc.setFontSize(8.5);
+      doc.text(String(idx+1),16,y+1);
+      doc.text(name,24,y+1);
+      doc.text(typ,110,y+1);
+      doc.text(String(r.q),142,y+1);
+      doc.text(r.pr.toFixed(3),155,y+1);
+      doc.text(r.sub.toFixed(3),178,y+1);
+      y+=8;
+    });
+    y+=4;
+    doc.setDrawColor(26,122,58);
+    doc.setLineWidth(0.4);
+    doc.line(14,y,W-14,y);
+    y+=8;
+    doc.setFillColor(15,92,40);
+    doc.roundedRect(120,y-5,76,14,2,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.text('TOTAL: '+tot.toFixed(3)+' OMR',158,y+3,{align:'center'});
+    y+=22;
+    doc.setTextColor(90,90,90);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8.5);
+    doc.text('Company: Al-Intishar Al-Wase for Services & Investment',14,y);
+    y+=5;
+    doc.text('Email: spreadthewide@gmail.com',14,y);
+    y+=5;
+    doc.text('Please confirm availability and delivery. Thank you for your order.',14,y);
+    y+=8;
+    doc.setTextColor(15,92,40);
+    doc.setFont('helvetica','bold');
+    doc.text('Chairman: Oday Al-Rawasan',14,y);
+    doc.setFillColor(201,162,39);
+    doc.rect(0,287,W,3,'F');
+    doc.setFillColor(15,92,40);
+    doc.rect(0,290,W,7,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(8);
+    doc.text('© 2026 Al-Intishar Al-Wase  |  Professional Order Invoice',W/2,294.5,{align:'center'});
+    const fname='Order-AlIntishar-'+String(now.getTime()).slice(-8)+'.pdf';
+    doc.save(fname);
+    toast(t('تم تحميل الفاتورة PDF','PDF invoice downloaded'));
+  }catch(e){console.error(e);toast(t('تعذر إنشاء PDF','PDF failed'));}
+  const lines=rows.map(i=>{const typ=i.type==='carton'?(lang==='ar'?' [كرتون/جملة]':' [Carton/Wholesale]'):'';return `• ${i.ar} / ${i.en}${typ}\n  ${i.q} × ${i.pr.toFixed(3)} = ${i.sub.toFixed(3)} ر.ع`;});
+  const msg=lang==='ar'
+    ?`مرحباً، أود تأكيد الطلب من *شركة الانتشار الواسع*:\n\n${lines.join('\n\n')}\n\n────────────\n*الإجمالي: ${tot.toFixed(3)} ر.ع*\n\nتم تحميل فاتورة PDF للطلب.\nيرجى تأكيد التوفر والتوصيل. شكراً`
+    :`Hello, confirm order from *The Wide Spread*:\n\n${lines.join('\n\n')}\n\n────────────\n*Total: ${tot.toFixed(3)} OMR*\n\nPDF invoice has been downloaded.\nPlease confirm availability. Thank you`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
+}
 function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBar').classList.add('show')});
 document.getElementById('installBtn').addEventListener('click',async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}else{const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);if(isIOS){document.getElementById('iosTip').classList.add('show');alert('على آيفون: اضغط زر المشاركة ثم "أضف إلى الشاشة الرئيسية"')}else{alert('استخدم قائمة المتصفح → تثبيت التطبيق')}}});
