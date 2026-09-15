@@ -177,7 +177,7 @@ footer{background:var(--pd);color:#fff;padding:28px 0 16px;margin-top:12px}
   <div class="fg">
     <div><h4>عن الشركة</h4><p>شركة الانتشار الواسع للخدمات والاستثمار - السجل 1478928 - سلطنة عمان</p></div>
     <div><h4>تواصل</h4><a href="tel:+96890969074">+968 9096 9074</a><a href="https://wa.me/96894755722">WhatsApp +968 9475 5722</a></div>
-    <div><h4>الطلب</h4><p>أضف للسلة (قطعة أو كرتون) ثم أرسل الفاتورة PDF</p></div>
+    <div><h4>الطلب</h4><p>أضف للسلة ثم أرسل الفاتورة PDF إلى +96894755722 فقط</p></div>
   </div>
   <div class="copy">© 2026 الانتشار الواسع للخدمات والاستثمار</div>
 </div>
@@ -217,7 +217,7 @@ function toggleLang(){lang=lang==='ar'?'en':'ar';document.documentElement.lang=l
 function filt(c){cur=c;document.querySelectorAll('.cat').forEach(b=>b.classList.toggle('on',b.dataset.c===c));rend()}
 function rend(){const list=cur==='all'?P:P.filter(p=>p.c===cur);document.getElementById('grid').innerHTML=list.map(p=>{const n=lang==='ar'?p.ar:p.en,s=lang==='ar'?p.en:p.ar;const src=IMGS[p.id];const img=src?`<img src="${src}" alt="${n}" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=fb>${p.ic}</span>'">`:`<span class="fb">${p.ic}</span>`;const cq=ctnQty(p.ct);return `<div class="card"><div class="pic">${img}</div><div class="body"><div class="name">${n}</div><div class="sub">${s}</div><div class="meta">${p.ct}</div><div class="price">${p.pr.toFixed(3)} <small>ر.ع</small></div><div class="acts2"><button class="b bp" onclick="add(${p.id},'unit')">${t('قطعة','Unit')}</button><button class="b bc" onclick="add(${p.id},'carton')">${t('كرتون','Carton')} (${cq})</button><button class="b bw" onclick="now(${p.id})">💬</button></div></div></div>`}).join('')}
 function add(id,type){type=type||'unit';const p=P.find(x=>x.id===id);const cq=ctnQty(p.ct);const qty=type==='carton'?cq:1;const key=cartKey(id,type);const e=cart.find(x=>x.key===key);if(e)e.q+=qty;else cart.push({key,id,q:qty,pr:p.pr,ar:p.ar,en:p.en,type,ct:p.ct});save();toast(type==='carton'?t('تمت إضافة كرتون','Carton added'):t('تمت الإضافة','Added'))}
-function now(id){const p=P.find(x=>x.id===id);const m=encodeURIComponent(lang==='ar'?`مرحباً، أود طلب من متجر الانتشار الواسع:\n\n• ${p.ar}\n• ${p.en}\n• السعر: ${p.pr.toFixed(3)} ر.ع\n• ${p.ct}\n\nالكمية: 1\n\nشكراً`:`Hello, order from The Wide Spread:\n\n• ${p.en}\n• ${p.ar}\n• Price: ${p.pr.toFixed(3)} OMR\n• ${p.ct}\n\nQty: 1\n\nThank you`);window.open(`https://wa.me/${WA}?text=${m}`,'_blank')}
+function now(id){const p=P.find(x=>x.id===id);const m=encodeURIComponent(lang==='ar'?`مرحباً، أود طلب من متجر الانتشار الواسع:\n\n• ${p.ar}\n• ${p.en}\n• السعر: ${p.pr.toFixed(3)} ر.ع\n• ${p.ct}\n\nالكمية: 1\n\nشكراً`:`Hello, order from The Wide Spread:\n\n• ${p.en}\n• ${p.ar}\n• Price: ${p.pr.toFixed(3)} OMR\n• ${p.ct}\n\nQty: 1\n\nThank you`);window.location.href=`https://wa.me/96894755722?text=${m}`}
 function save(){localStorage.setItem('ab_cart_v3',JSON.stringify(cart));updateFloat();rendCart()}
 function cartTotals(){let items=0,tot=0;cart.forEach(i=>{items+=i.q;tot+=i.pr*i.q});return{items,tot}}
 function updateFloat(){const{items,tot}=cartTotals();document.getElementById('cnt').textContent=items;document.getElementById('floatTot').textContent=tot.toFixed(3)+' ر.ع';document.getElementById('floatCnt').textContent=items+' '+(lang==='ar'?'منتج':'items');document.getElementById('floatBar').classList.toggle('show',items>0)}
@@ -228,15 +228,16 @@ function openCart(){document.getElementById('ov').classList.add('on');rendCart()
 function closeCart(){document.getElementById('ov').classList.remove('on')}
 function checkout(){
   if(!cart.length){toast(t('السلة فارغة','Cart empty'));return}
-  let tot=0;
-  const rows=cart.map(i=>{const s=i.pr*i.q;tot+=s;return Object.assign({},i,{sub:s});});
-  const orderNo='ABS-'+String(Date.now()).slice(-8);
-  const now=new Date();
-  const dateStr=now.toLocaleString(lang==='ar'?'ar-OM':'en-GB');
+  var tot=0;
+  var rows=cart.map(function(i){var s=i.pr*i.q;tot+=s;return Object.assign({},i,{sub:s});});
+  var orderNo='ABS-'+String(Date.now()).slice(-8);
+  var now=new Date();
+  var dateStr=now.toLocaleString(lang==='ar'?'ar-OM':'en-GB');
+  var FIXED_WA='96894755722';
   function buildPdf(){
     if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF not loaded');
-    const doc=new window.jspdf.jsPDF({orientation:'p',unit:'mm',format:'a4'});
-    const W=210;
+    var doc=new window.jspdf.jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    var W=210;
     doc.setFillColor(15,92,40);doc.rect(0,0,W,32,'F');
     doc.setFillColor(201,162,39);doc.rect(0,32,W,2,'F');
     doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
@@ -249,7 +250,7 @@ function checkout(){
     doc.setFont('helvetica','normal');doc.setTextColor(70,70,70);doc.setFontSize(9);
     doc.text('Date: '+dateStr,14,51);
     doc.text('Order #: '+orderNo,W-14,51,{align:'right'});
-    let y=58;
+    var y=58;
     doc.setFillColor(26,122,58);doc.rect(14,y,W-28,8,'F');
     doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);
     doc.text('#',16,y+5.5);doc.text('Product',24,y+5.5);doc.text('Type',112,y+5.5);
@@ -286,7 +287,7 @@ function checkout(){
     var a=document.createElement('a');
     a.href=url;a.download=filename;a.style.display='none';
     document.body.appendChild(a);a.click();
-    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1500);
+    setTimeout(function(){URL.revokeObjectURL(url);if(a.parentNode)a.parentNode.removeChild(a);},2000);
   }
   function clearCartAfterSend(){
     cart=[];
@@ -294,48 +295,29 @@ function checkout(){
     updateFloat();rendCart();
     closeCart();
   }
-  function openWa(){
+  function openFixedWhatsApp(){
     var lines=rows.map(function(i){
       var typ=i.type==='carton'?(lang==='ar'?' [كرتون]':' [Carton]'):'';
       return '• '+i.ar+' / '+i.en+typ+'\n  '+i.q+' x '+i.pr.toFixed(3)+' = '+i.sub.toFixed(3)+' OMR';
     });
     var msg=(lang==='ar')
-      ?('مرحباً، طلب من *شركة الانتشار الواسع*\nرقم الطلب: '+orderNo+'\n\n'+lines.join('\n\n')+'\n\n────────────\n*الإجمالي: '+tot.toFixed(3)+' ر.ع*\n\nتم إرسال فاتورة PDF مع الطلب.\nيرجى التأكيد. شكراً')
-      :('Hello, order from *The Wide Spread*\nOrder #: '+orderNo+'\n\n'+lines.join('\n\n')+'\n\n────────────\n*Total: '+tot.toFixed(3)+' OMR*\n\nPDF invoice is attached/downloaded.\nPlease confirm. Thank you');
-    window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
-  }
-  function finishOk(){
-    toast(t('تم تحميل الفاتورة وإفراغ السلة','Invoice downloaded & cart cleared'));
-    clearCartAfterSend();
-    setTimeout(openWa,600);
+      ?('مرحباً، طلب جديد من *متجر الانتشار الواسع*\nرقم الطلب: *'+orderNo+'*\n\n'+lines.join('\n\n')+'\n\n────────────\n*الإجمالي: '+tot.toFixed(3)+' ر.ع*\n\n📄 تم تحميل فاتورة PDF للطلب.\nيرجى إرفاق ملف PDF من التنزيلات ثم التأكيد.\nالرقم المستلم إجباري: +96894755722')
+      :('Hello, new order from *The Wide Spread*\nOrder #: *'+orderNo+'*\n\n'+lines.join('\n\n')+'\n\n────────────\n*Total: '+tot.toFixed(3)+' OMR*\n\n📄 PDF invoice downloaded.\nPlease attach the PDF from Downloads then confirm.\nFixed recipient: +96894755722');
+    window.location.href='https://wa.me/'+FIXED_WA+'?text='+encodeURIComponent(msg);
   }
   try{
     var doc=buildPdf();
     var filename='Order-'+orderNo+'.pdf';
     var blob=doc.output('blob');
-    var file=null;
-    try{file=new File([blob],filename,{type:'application/pdf'});}catch(e){}
-    if(file && navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({
-        files:[file],
-        title:t('فاتورة طلب - الانتشار الواسع','Order Invoice - The Wide Spread'),
-        text:t('طلب رقم ','Order #')+orderNo+' | '+tot.toFixed(3)+' OMR'
-      }).then(function(){
-        toast(t('تمت مشاركة الفاتورة','Invoice shared'));
-        clearCartAfterSend();
-      }).catch(function(){
-        downloadBlob(blob,filename);
-        finishOk();
-      });
-      return;
-    }
     downloadBlob(blob,filename);
-    finishOk();
+    toast(t('تم إنشاء الفاتورة — جاري فتح واتساب على +96894755722','Invoice created — opening WhatsApp +96894755722'));
+    clearCartAfterSend();
+    setTimeout(openFixedWhatsApp,900);
   }catch(err){
     console.error(err);
-    toast(t('تعذر إنشاء PDF - سيتم الإرسال كنص','PDF failed - sending text'));
-    openWa();
+    toast(t('تعذر PDF — فتح واتساب إجباري على الرقم','PDF failed — opening fixed WhatsApp'));
     clearCartAfterSend();
+    setTimeout(openFixedWhatsApp,500);
   }
 }
 function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
